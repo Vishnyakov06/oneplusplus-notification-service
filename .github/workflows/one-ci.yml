@@ -1,0 +1,24 @@
+name: CI
+on:
+  pull_request:
+    branches:
+      - main
+jobs:
+  build-test-and-checkStyle:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup JDK 25
+        uses: actions/setup-java@v4
+        with:
+          java-version: '25'
+          distribution: 'temurin'
+          cache: 'maven'
+
+      - name: Run checkStyle
+        run: mvn checkstyle:check -ntp
+
+      - name: Run tests
+        run: mvn test -Dtest=!NotificationServiceApplicationTests,* -ntp -B

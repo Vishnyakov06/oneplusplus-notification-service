@@ -1,0 +1,17 @@
+services:
+  notification-service:
+    profiles: [ "backend" ]
+    build:
+      context: .
+    container_name: one-notification-service
+    ports:
+      - "${NOTIFICATION_PORT:-8081}:8081"
+    environment:
+      - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+    networks:
+      - one-shared-network
+
+networks:
+  one-shared-network:
+    external: true
+    name: one-shared-network
