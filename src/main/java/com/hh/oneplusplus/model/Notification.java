@@ -17,7 +17,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @Entity
-@Table(name = "notification")
+@Table(name = "notifications")
 public class Notification {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
