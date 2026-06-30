@@ -1,0 +1,19 @@
+databaseChangeLog:
+  - changeSet:
+      id: 001-create-notifications-table
+      author: Daniil Vishnyakov
+      changes:
+        - sqlFile:
+            path: db/changelog/changes/001-create-notifications-table.sql
+  - changeSet:
+      id: 002-create-message-templates-table
+      author: Daniil Vishnyakov
+      changes:
+        - sqlFile:
+            path: db/changelog/changes/002-create-message-templates-table.sql
+  - changeSet:
+      id: 003-insert-message-templates
+      author: Daniil Vishnyakov
+      changes:
+        - sqlFile:
+            path: db/changelog/changes/003-insert-message-templates.sql
