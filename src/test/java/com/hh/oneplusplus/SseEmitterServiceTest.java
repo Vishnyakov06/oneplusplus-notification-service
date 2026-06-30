@@ -15,9 +15,13 @@ import java.time.Instant;
 import java.util.Map;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
-
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.atLeastOnce;
 @ExtendWith(MockitoExtension.class)
 class SseEmitterServiceTest {
 
