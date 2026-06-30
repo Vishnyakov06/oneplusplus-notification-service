@@ -1,4 +1,24 @@
 services:
+  notification-postgres:
+    image: postgres:18-alpine
+    container_name: notification-postgres
+    networks:
+      - one-shared-network
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${NOTIFICATION_DB:-notification_db}
+      POSTGRES_USER: ${NOTIFICATION_USER:-notification_user}
+      POSTGRES_PASSWORD: ${NOTIFICATION_PASSWORD:-notification_password}
+    ports:
+      - "5433:5432"
+    volumes:
+      - notification_postgres_data:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${NOTIFICATION_USER:-notification_user} -d ${NOTIFICATION_DB:-notification_db}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   notification-service:
     profiles: [ "backend" ]
     build:
@@ -8,6 +28,16 @@ services:
       - "${NOTIFICATION_PORT:-8081}:8081"
     environment:
       - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+      - POSTGRES_HOST=notification-postgres
+      - POSTGRES_PORT=5432
+      - POSTGRES_DB=${NOTIFICATION_DB:-notification_db}
+      - POSTGRES_USER=${NOTIFICATION_USER:-notification_user}
+      - POSTGRES_PASSWORD=${NOTIFICATION_PASSWORD:-notification_password}
+      - MAIL_SENDER=${MAIL_SENDER}
+      - MAIL_PASSWORD=${MAIL_PASSWORD}
+    depends_on:
+      notification-postgres:
+        condition: service_healthy
     networks:
       - one-shared-network
 
@@ -15,3 +45,6 @@ networks:
   one-shared-network:
     external: true
     name: one-shared-network
+
+volumes:
+  notification_postgres_data:
