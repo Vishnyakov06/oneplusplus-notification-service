@@ -39,7 +39,7 @@ public class MessageResolverService {
         Map<String, Object> flatFields = new HashMap<>();
         flatten("", fields, flatFields);
 
-        return StringSubstitutor.replace(template, fields);
+        return StringSubstitutor.replace(template, flatFields);
     }
     private void flatten(String prefix, Map<String, Object> source, Map<String, Object> result){
         for(Map.Entry<String, Object> entry: source.entrySet()){

@@ -22,17 +22,21 @@ public class SseEmitterService {
     @Value("${app.sse.reconnect-time-ms:10000}")
     private long reconnectTimeMs;
 
-    public void addEmitter(Long userId, SseEmitter emitter){
-        List<SseEmitter> userEmitters = emitters.computeIfAbsent(userId, k -> new CopyOnWriteArrayList<>());
+    public void addEmitter(Long userId, SseEmitter emitter) {
+        emitters.compute(userId, (id, userEmitters) -> {
+            if (userEmitters == null) {
+                userEmitters = new CopyOnWriteArrayList<>();
+            }
+            if (userEmitters.size() >= maxTabsPerUser) {
+                SseEmitter oldEmitter = userEmitters.getFirst();
+                userEmitters.remove(oldEmitter);
+                oldEmitter.complete();
+            }
+            userEmitters.add(emitter);
+            return userEmitters;
+        });
 
-        if(isLimitExceeded(userId)){
-            SseEmitter oldEmitter = userEmitters.getFirst();
-            userEmitters.remove(oldEmitter);
-            oldEmitter.complete();
-        }
-        userEmitters.add(emitter);
-
-        try{
+        try {
             emitter.send(SseEmitter.event()
                     .name("init")
                     .reconnectTime(reconnectTimeMs)
@@ -43,13 +47,10 @@ public class SseEmitterService {
     }
 
     public void removeEmitter(Long userId, SseEmitter emitter){
-        List<SseEmitter> userEmitters = emitters.get(userId);
-        if(userEmitters != null){
+        emitters.computeIfPresent(userId, (id, userEmitters) -> {
             userEmitters.remove(emitter);
-            if(userEmitters.isEmpty()){
-                emitters.remove(userId);
-            }
-        }
+            return userEmitters.isEmpty() ? null : userEmitters;
+        });
     }
 
     public void sendToUser(Long userId, NotificationResponseDto responseDto){
@@ -66,7 +67,6 @@ public class SseEmitterService {
                         .data(responseDto));
             } catch (IOException e) {
                 emitter.completeWithError(e);
-                removeEmitter(userId, emitter);
             }
         });
     }
@@ -77,19 +77,10 @@ public class SseEmitterService {
             userEmitter.forEach(emitter -> {
                 try {
                     emitter.send(SseEmitter.event().comment("ping"));
-                } catch (IOException e) {
+                } catch (IOException | IllegalStateException e) {
                     emitter.completeWithError(e);
-                    removeEmitter(userId, emitter);
-                }
-                catch (IllegalStateException e) {
-                    removeEmitter(userId, emitter);
                 }
             });
         });
-    }
-
-    private boolean isLimitExceeded(Long userId) {
-        List<SseEmitter> userEmitters = emitters.get(userId);
-        return userEmitters != null && userEmitters.size() >= maxTabsPerUser;
     }
 }

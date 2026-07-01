@@ -35,6 +35,8 @@ services:
       - POSTGRES_PASSWORD=${NOTIFICATION_PASSWORD:-notification_password}
       - MAIL_SENDER=${MAIL_SENDER}
       - MAIL_PASSWORD=${MAIL_PASSWORD}
+      - MAIL_HOST=${MAIL_HOST}
+      - MAIL_PORT=${MAIL_PORT}
     depends_on:
       notification-postgres:
         condition: service_healthy
