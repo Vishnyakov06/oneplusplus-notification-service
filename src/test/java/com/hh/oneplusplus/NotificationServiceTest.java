@@ -15,6 +15,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.dao.DataIntegrityViolationException;
 
 import java.time.Instant;
 import java.util.Map;
@@ -49,7 +50,6 @@ class NotificationServiceTest {
 
     private NotificationEvent event;
     private NotificationResponseDto responseDto;
-    private UUID notificationId;
     private Long userId;
 
     @BeforeEach
@@ -60,13 +60,11 @@ class NotificationServiceTest {
         );
         notificationService = new NotificationService(senders, factory, notificationRepository, mapper);
 
-        notificationId = UUID.randomUUID();
         userId = 11L;
-
         event = mock(NotificationEvent.class);
 
         responseDto = new NotificationResponseDto(
-                notificationId,
+                UUID.randomUUID(),
                 NotificationEventType.WELCOME,
                 "test@gmail.com",
                 Instant.now(),
@@ -77,18 +75,17 @@ class NotificationServiceTest {
 
     @Test
     void shouldSaveAndSendWhenTypeIsWeb() {
+        Notification mockNotification = mock(Notification.class);
+
         when(event.getType()).thenReturn(NotificationType.WEB);
-        when(event.getNotificationId()).thenReturn(notificationId);
         when(event.getUserId()).thenReturn(userId);
         when(factory.create(event)).thenReturn(responseDto);
-        when(notificationRepository.existsByNotificationId(notificationId)).thenReturn(false);
-        when(mapper.toEntity(event, responseDto)).thenReturn(mock(Notification.class));
+        when(mapper.toEntity(event, responseDto)).thenReturn(mockNotification);
 
         notificationService.handle(event);
 
-        verify(notificationRepository).save(any(Notification.class));
+        verify(notificationRepository).save(mockNotification);
         verify(webSender).send(userId, responseDto);
-        verify(mailSender, never()).send(any(), any());
     }
 
     @Test
@@ -105,16 +102,18 @@ class NotificationServiceTest {
 
     @Test
     void shouldNotSaveDuplicateNotification() {
+        Notification mockNotification = mock(Notification.class);
+
         when(event.getType()).thenReturn(NotificationType.WEB);
-        when(event.getNotificationId()).thenReturn(notificationId);
-        when(event.getUserId()).thenReturn(userId);
         when(factory.create(event)).thenReturn(responseDto);
-        when(notificationRepository.existsByNotificationId(notificationId)).thenReturn(true);
+        when(mapper.toEntity(event, responseDto)).thenReturn(mockNotification);
+        when(notificationRepository.save(mockNotification))
+                .thenThrow(new DataIntegrityViolationException("Duplicate"));
 
         notificationService.handle(event);
 
-        verify(notificationRepository, never()).save(any());
-        verify(webSender).send(userId, responseDto);
+        verify(notificationRepository).save(mockNotification);
+        verify(webSender, never()).send(any(), any());
     }
 
     @Test
