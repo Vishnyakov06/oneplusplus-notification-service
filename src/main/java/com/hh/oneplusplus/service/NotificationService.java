@@ -8,6 +8,7 @@ import com.hh.oneplusplus.mapper.NotificationMapper;
 import com.hh.oneplusplus.model.Notification;
 import com.hh.oneplusplus.repository.NotificationRepository;
 import com.hh.oneplusplus.sender.NotificationSender;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
@@ -33,18 +34,23 @@ public class NotificationService {
     public void handle(NotificationEvent notificationEvent){
         NotificationResponseDto responseDto = factory.create(notificationEvent);
 
-        if(notificationEvent.getType().equals(NotificationType.WEB)){
-            saveNotification(notificationEvent, responseDto);
+        if (notificationEvent.getType().equals(NotificationType.WEB)) {
+            boolean isDuplicate = !saveNotification(notificationEvent, responseDto);
+            if (isDuplicate) {
+                return;
+            }
         }
-
         NotificationSender sender = notificationSenders.get(notificationEvent.getType().name());
         sender.send(notificationEvent.getUserId(), responseDto);
     }
 
-    private void saveNotification(NotificationEvent notificationEvent, NotificationResponseDto responseDto){
-        if(!notificationRepository.existsByNotificationId(notificationEvent.getNotificationId())){
+    private boolean saveNotification(NotificationEvent notificationEvent, NotificationResponseDto responseDto){
+        try {
             Notification notification = mapper.toEntity(notificationEvent, responseDto);
             notificationRepository.save(notification);
+            return true;
+        } catch (DataIntegrityViolationException e) {
+            return false;
         }
     }
 }
