@@ -10,10 +10,11 @@ import java.util.UUID;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public record NotificationResponseDto(
         UUID notificationId,
-        NotificationEventType eventType,
+        NotificationEventType notificationType,
         String email,
         Instant createdAt,
         String fallbackMessage,
+        boolean read,
         Map<String, Object> params
 ) {
 }

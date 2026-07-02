@@ -21,7 +21,12 @@ public interface NotificationMapper {
     @Mapping(source = "responseDto.fallbackMessage", target = "message")
     @Mapping(source = "responseDto.params", target = "params")
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "read", ignore = true)
+    @Mapping(source = "responseDto.read", target = "read")
     @Mapping(target = "readAt", ignore = true)
     Notification toEntity(NotificationEvent event, NotificationResponseDto responseDto);
+
+    @Mapping(source = "message", target = "fallbackMessage")
+    @Mapping(source = "read", target = "read")
+    @Mapping(target = "email", ignore = true)
+    NotificationResponseDto toResponseDto(Notification entity);
 }

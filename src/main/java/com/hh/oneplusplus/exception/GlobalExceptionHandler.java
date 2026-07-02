@@ -21,6 +21,11 @@ public class GlobalExceptionHandler {
                 .body(new ErrorResponseDto("TEMPLATE_NOT_FOUND", ex.getMessage()));
     }
 
+    @ExceptionHandler(UnauthorizedException.class)
+    public ResponseEntity<String> handleUnauthorized(UnauthorizedException e) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+    }
+
     @ExceptionHandler(ForbiddenException.class)
     public ResponseEntity<ErrorResponseDto> handleForbidden(ForbiddenException ex) {
         return ResponseEntity.status(HttpStatus.FORBIDDEN)
