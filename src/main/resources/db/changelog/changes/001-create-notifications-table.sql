@@ -6,7 +6,8 @@ create table notifications (
     message TEXT not null,
     params JSONB,
     is_read BOOLEAN not null default false,
-    created_at timestamp not null
+    created_at timestamp not null,
+    read_at timestamp
 );
 
 create index idx_notifications_user_id on notifications (user_id);

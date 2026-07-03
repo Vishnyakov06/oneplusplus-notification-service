@@ -17,3 +17,9 @@ databaseChangeLog:
       changes:
         - sqlFile:
             path: db/changelog/changes/003-insert-message-templates.sql
+  - changeSet:
+      id: 004-create-notification-deliveries-table
+      author: Daniil Vishnyakov
+      changes:
+        - sqlFile:
+            path: db/changelog/changes/004-create-notification-deliveries-table.sql
