@@ -2,7 +2,6 @@ package com.hh.oneplusplus.sender;
 
 import com.hh.oneplusplus.dto.NotificationResponseDto;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Component;
@@ -25,11 +24,6 @@ public class MailNotificationSender implements NotificationSender{
         message.setTo(notificationResponseDto.email());
         message.setSubject("One++ уведомление");
         message.setText(notificationResponseDto.fallbackMessage());
-        try{
-            mailSender.send(message);
-        }
-        catch (MailException ex){
-            return;
-        }
+        mailSender.send(message);
     }
 }

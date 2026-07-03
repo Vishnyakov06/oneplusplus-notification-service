@@ -22,5 +22,6 @@ public interface NotificationMapper {
     @Mapping(source = "responseDto.params", target = "params")
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "read", ignore = true)
+    @Mapping(target = "readAt", ignore = true)
     Notification toEntity(NotificationEvent event, NotificationResponseDto responseDto);
 }
