@@ -46,7 +46,7 @@ public class Notification {
     @Column(name = "created_at", nullable = false)
     private Instant createdAt;
 
-    @Column(name = "readAt", nullable = true)
+    @Column(name = "read_at", nullable = true)
     private Instant readAt;
 
     public Instant getReadAt() {

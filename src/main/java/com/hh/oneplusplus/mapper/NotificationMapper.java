@@ -9,10 +9,11 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring")
 public interface NotificationMapper {
     @Mapping(source = "event.notificationId", target = "notificationId")
-    @Mapping(source = "event.eventType", target = "eventType")
+    @Mapping(source = "event.eventType", target = "notificationType")
     @Mapping(source = "event.createdAt", target = "createdAt")
     @Mapping(source = "event.params", target = "params")
-    NotificationResponseDto toResponseDto(NotificationEvent event, String fallbackMessage);
+    @Mapping(target = "email", ignore = true)
+    NotificationResponseDto toResponseDto(NotificationEvent event, String fallbackMessage, boolean read);
 
     @Mapping(source = "event.notificationId", target = "notificationId")
     @Mapping(source = "event.userId", target = "userId")

@@ -26,7 +26,7 @@ public class NotificationCleanUpScheduler {
     @Scheduled(cron = "0 0 */12 * * *")
     @Transactional
     public void cleanUpOldReadNotifications() {
-        int deletedCount = notificationRepository.deleteOldReadNotifications(Instant.now()
+        int deletedCount = notificationRepository.deleteReadBefore(Instant.now()
                 .minus(ttlDays, ChronoUnit.DAYS));
         log.info("Cleanup finished. Successfully deleted {} read notifications.", deletedCount);
     }

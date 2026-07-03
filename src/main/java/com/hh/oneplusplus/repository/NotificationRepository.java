@@ -27,15 +27,15 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
     int deleteByNotificationIdAndUserId(@Param("notificationId") UUID notificationId, @Param("userId") Long userId);
 
     @Modifying
-    @Query("DELETE FROM Notification n where n.isRead = true and n.createdAt < :targetTime")
-    int deleteOldReadNotifications(@Param("targetTime")Instant targetTime);
+    @Query("DELETE FROM Notification n where n.isRead = true and n.readAt < :targetTime")
+    int deleteReadBefore(@Param("targetTime")Instant targetTime);
 
     @Modifying
-    @Query("UPDATE Notification n SET n.isRead = true where n.userId = :userId and n.isRead = false")
+    @Query("UPDATE Notification n SET n.isRead = true, n.readAt = CURRENT_TIMESTAMP where n.userId = :userId and n.isRead = false")
     void markAllAsRead(@Param("userId")Long userId);
 
     @Modifying
-    @Query("UPDATE Notification n SET n.isRead = true" +
+    @Query("UPDATE Notification n SET n.isRead = true, n.readAt = CURRENT_TIMESTAMP" +
             " where n.notificationId in :ids and n.userId = :userId and n.isRead = false")
     void markSelectedAsRead(@Param("ids") List<UUID> ids, @Param("userId") Long userId);
 }
