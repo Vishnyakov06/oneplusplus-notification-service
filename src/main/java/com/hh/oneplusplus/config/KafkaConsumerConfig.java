@@ -22,7 +22,7 @@ public class KafkaConsumerConfig {
 
         ConsumerRecordRecoverer recoverer = (record, exception) -> {
             log.error("Skipping unprocessable record: topic={}, partition={}, offset={}, error={}",
-                    record.topic(), record.partition(), record.offset(), exception.getMessage());
+                    record.topic(), record.partition(), record.offset(), exception.getMessage(), exception);
         };
 
         var handler = new DefaultErrorHandler(recoverer, backoff);

@@ -5,8 +5,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
-
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -41,7 +39,7 @@ public class SseEmitterService {
                     .name("init")
                     .reconnectTime(reconnectTimeMs)
                     .data("Connected"));
-        } catch (IOException e) {
+        } catch (Exception e) {
             removeEmitter(userId, emitter);
         }
     }
@@ -65,8 +63,9 @@ public class SseEmitterService {
                 emitter.send(SseEmitter.event()
                         .name("notification")
                         .data(responseDto));
-            } catch (IOException e) {
+            } catch (Exception e) {
                 emitter.completeWithError(e);
+                removeEmitter(userId, emitter);
             }
         });
     }
@@ -77,8 +76,9 @@ public class SseEmitterService {
             userEmitter.forEach(emitter -> {
                 try {
                     emitter.send(SseEmitter.event().comment("ping"));
-                } catch (IOException | IllegalStateException e) {
+                } catch (Exception e) {
                     emitter.completeWithError(e);
+                    removeEmitter(userId, emitter);
                 }
             });
         });
