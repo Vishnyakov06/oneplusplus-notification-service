@@ -46,6 +46,17 @@ public class Notification {
     @Column(name = "created_at", nullable = false)
     private Instant createdAt;
 
+    @Column(name = "readAt", nullable = true)
+    private Instant readAt;
+
+    public Instant getReadAt() {
+        return readAt;
+    }
+
+    public void setReadAt(Instant readAt) {
+        this.readAt = readAt;
+    }
+
     public Notification() {
     }
 
