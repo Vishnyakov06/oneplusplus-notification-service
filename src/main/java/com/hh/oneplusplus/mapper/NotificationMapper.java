@@ -17,7 +17,7 @@ public interface NotificationMapper {
 
     @Mapping(source = "event.notificationId", target = "notificationId")
     @Mapping(source = "event.userId", target = "userId")
-    @Mapping(source = "event.eventType", target = "eventType")
+    @Mapping(source = "event.eventType", target = "notificationType")
     @Mapping(source = "event.createdAt", target = "createdAt")
     @Mapping(source = "responseDto.fallbackMessage", target = "message")
     @Mapping(source = "responseDto.params", target = "params")

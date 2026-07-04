@@ -110,6 +110,11 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.github.mrskeletone</groupId>
+            <artifactId>onePlusPlus-jwt-library</artifactId>
+            <version>15ba4c30ce77e607e2b652c2db33ee68eb55b2e7</version>
+        </dependency>
     </dependencies>
 
     <build>

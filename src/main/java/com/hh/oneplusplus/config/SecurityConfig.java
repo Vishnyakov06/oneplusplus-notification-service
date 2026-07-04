@@ -1,5 +1,6 @@
 package com.hh.oneplusplus.config;
 
+import com.hh.oneplusplus.jwt.JwtFilter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
