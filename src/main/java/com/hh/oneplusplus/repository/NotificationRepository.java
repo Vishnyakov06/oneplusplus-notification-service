@@ -15,7 +15,9 @@ import java.util.UUID;
 
 @Repository
 public interface NotificationRepository extends JpaRepository<Notification, Long> {
-    Page<Notification> findByUserId(Long id, Pageable pageable);
+    @Query("SELECT n FROM Notification n WHERE n.userId = :userId ORDER BY n.createdAt DESC")
+    Page<Notification> findByUserId(@Param("userId") Long userId, Pageable pageable);
+
     List<Notification> findByUserId(Long id);
     List<Notification> findByUserIdAndIsReadFalse(Long userId);
     boolean existsByNotificationId(UUID notificationId);
