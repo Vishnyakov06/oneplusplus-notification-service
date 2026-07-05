@@ -18,10 +18,10 @@ public class MailNotificationSender implements NotificationSender{
     }
 
     @Override
-    public void send(Long userId, NotificationResponseDto notificationResponseDto) {
+    public void send(Long userId, String email, NotificationResponseDto notificationResponseDto) {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom(from);
-        message.setTo(notificationResponseDto.email());
+        message.setTo(email);
         message.setSubject("One++ уведомление");
         message.setText(notificationResponseDto.fallbackMessage());
         mailSender.send(message);

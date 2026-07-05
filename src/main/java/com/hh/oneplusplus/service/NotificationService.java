@@ -49,7 +49,7 @@ public class NotificationService {
 
         String channel = notificationEvent.getType().name();
         eventPublisher.publishEvent(new NotificationReadyToSendEvent(channel,
-                notificationEvent.getUserId(), responseDto));
+                notificationEvent.getUserId(), notificationEvent.getEmail(), responseDto));
     }
 
     private void saveNotification(NotificationEvent notificationEvent, NotificationResponseDto responseDto){
