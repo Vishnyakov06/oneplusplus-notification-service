@@ -41,6 +41,27 @@ public class MessageResolverService {
 
         return StringSubstitutor.replace(template, flatFields);
     }
+
+    public String resolveGroupMessage(NotificationEventType eventType, Integer groupCount, Map<String, Object> params){
+        String eventTypeGroup = eventType.name() + ":group";
+        String template = templateCache.get(
+                eventTypeGroup,
+                key -> messageTemplateRepository
+                        .findByEventType(eventType)
+                        .orElseThrow(() -> new TemplateNotFoundException(key))
+                        .getGroupTemplate()
+        );
+        int others = groupCount - 1;
+
+        Map<String, Object> fields = Map.of(
+                "params", params,
+                "othersCount", others,
+                "othersWord", pluralForm(others)
+        );
+        Map<String, Object> flatFields = new HashMap<>();
+        flatten("", fields, flatFields);
+        return StringSubstitutor.replace(template, flatFields);
+    }
     private void flatten(String prefix, Map<String, Object> source, Map<String, Object> result){
         for(Map.Entry<String, Object> entry: source.entrySet()){
             String key = prefix.isEmpty() ? entry.getKey() : prefix + "." + entry.getKey();
@@ -51,5 +72,19 @@ public class MessageResolverService {
                 result.put(key, entry.getValue());
             }
         }
+    }
+    private String pluralForm(int n) {
+        int mod100 = n % 100;
+        int mod10 = mod100 % 10;
+        if (mod100 > 10 && mod100 < 20){
+            return "человек";
+        }
+        if (mod10 > 1 && mod10 < 5){
+            return "человека";
+        }
+        if (mod10 == 1){
+            return "человек";
+        }
+        return "человек";
     }
 }

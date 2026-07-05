@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.hh.oneplusplus.dto.notification.NotificationEventType;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -15,6 +16,9 @@ public record NotificationResponseDto(
         Instant createdAt,
         String fallbackMessage,
         boolean read,
-        Map<String, Object> params
+        Map<String, Object> params,
+
+        Integer groupCount,
+        List<UUID> groupIds
 ) {
 }

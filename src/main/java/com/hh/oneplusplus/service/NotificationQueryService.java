@@ -4,36 +4,39 @@ import com.hh.oneplusplus.dto.MarkReadRequestDto;
 import com.hh.oneplusplus.dto.NotificationPageResponse;
 import com.hh.oneplusplus.dto.NotificationResponseDto;
 import com.hh.oneplusplus.dto.UnreadCountResponse;
+import com.hh.oneplusplus.dto.notification.NotificationEventType;
 import com.hh.oneplusplus.exception.NotificationNotFoundException;
-import com.hh.oneplusplus.mapper.NotificationMapper;
+import com.hh.oneplusplus.mapper.NotificationGroupMapper;
 import com.hh.oneplusplus.repository.NotificationRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Set;
 import java.util.UUID;
 
 @Service
 public class NotificationQueryService {
     private final NotificationRepository notificationRepository;
-    private final NotificationMapper mapper;
     private final SecurityContextService securityContextService;
+    private final NotificationGroupMapper notificationGroupMapper;
 
     public NotificationQueryService(
             NotificationRepository notificationRepository,
-            NotificationMapper mapper,
-            SecurityContextService securityContextService) {
+            SecurityContextService securityContextService,
+            NotificationGroupMapper notificationGroupMapper) {
         this.notificationRepository = notificationRepository;
-        this.mapper = mapper;
         this.securityContextService = securityContextService;
+        this.notificationGroupMapper = notificationGroupMapper;
     }
 
     @Transactional(readOnly = true)
     public NotificationPageResponse getNotifications(Pageable pageable) {
         Long userId = securityContextService.getUserId();
-        Page<NotificationResponseDto> responseDto = notificationRepository.findByUserId(userId, pageable)
-                .map(mapper::toResponseDto);
+        Set<String> groupableTypes = NotificationEventType.GROUPABLE_TYPES;
+        Page<NotificationResponseDto> responseDto = notificationRepository.findGroupedPage(userId, groupableTypes, pageable)
+                .map(notificationGroupMapper::map);
         long totalUnread = notificationRepository.countByUserIdAndIsReadFalse(userId);
         return new NotificationPageResponse(responseDto, totalUnread);
     }
