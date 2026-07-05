@@ -20,6 +20,9 @@ public class MessageTemplate {
     @Column(name = "template", nullable = false)
     private String template;
 
+    @Column(name = "group_template")
+    private String groupTemplate;
+
     public MessageTemplate() {
     }
 
@@ -37,5 +40,13 @@ public class MessageTemplate {
 
     public void setTemplate(String template) {
         this.template = template;
+    }
+
+    public String getGroupTemplate() {
+        return groupTemplate;
+    }
+
+    public void setGroupTemplate(String groupTemplate) {
+        this.groupTemplate = groupTemplate;
     }
 }
