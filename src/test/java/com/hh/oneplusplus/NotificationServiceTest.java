@@ -72,7 +72,9 @@ class NotificationServiceTest {
                 Instant.now(),
                 "Добро пожаловать!",
                 false,
-                Map.of()
+                Map.of(),
+                null,
+                null
         );
     }
 
