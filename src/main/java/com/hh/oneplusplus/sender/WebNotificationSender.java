@@ -13,7 +13,7 @@ public class WebNotificationSender implements NotificationSender{
     }
 
     @Override
-    public void send(Long userId, NotificationResponseDto notificationResponseDto) {
+    public void send(Long userId, String email, NotificationResponseDto notificationResponseDto) {
         sseEmitterService.sendToUser(userId, notificationResponseDto);
     }
 }

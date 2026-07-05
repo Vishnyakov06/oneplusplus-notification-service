@@ -1,5 +1,6 @@
 package com.hh.oneplusplus.repository;
 
+import com.hh.oneplusplus.dto.notification.NotificationType;
 import com.hh.oneplusplus.model.NotificationDelivery;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -16,5 +17,5 @@ public interface NotificationDeliveryRepository extends JpaRepository<Notificati
         ON CONFLICT (notification_id, channel) DO NOTHING
         """, nativeQuery = true)
     int tryReserve(@Param("notificationId") UUID notificationId, @Param("channel") String channel);
-    void deleteByNotificationIdAndChannel(UUID notificationId, String channel);
+    void deleteByNotificationIdAndChannel(UUID notificationId, NotificationType channel);
 }

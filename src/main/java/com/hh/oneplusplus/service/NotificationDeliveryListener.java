@@ -1,6 +1,7 @@
 package com.hh.oneplusplus.service;
 
 import com.hh.oneplusplus.dto.NotificationReadyToSendEvent;
+import com.hh.oneplusplus.dto.notification.NotificationType;
 import com.hh.oneplusplus.repository.NotificationDeliveryRepository;
 import com.hh.oneplusplus.sender.NotificationSender;
 import org.springframework.stereotype.Component;
@@ -24,10 +25,11 @@ public class NotificationDeliveryListener {
     public void onNotificationReadyToSend(NotificationReadyToSendEvent event){
         NotificationSender sender = notificationSenders.get(event.channel());
         try {
-            sender.send(event.userId(), event.responseDto());
+            sender.send(event.userId(), event.email(), event.responseDto());
         }
         catch (Exception ex){
-            notificationDeliveryRepository.deleteByNotificationIdAndChannel(event.responseDto().notificationId(), event.channel());
+            notificationDeliveryRepository.deleteByNotificationIdAndChannel(event.responseDto().notificationId(),
+                    NotificationType.valueOf(event.channel()));
             throw ex;
         }
     }
