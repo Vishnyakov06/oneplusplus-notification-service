@@ -1,0 +1,55 @@
+package com.hh.oneplusplus.service;
+
+import com.github.benmanes.caffeine.cache.Cache;
+import com.hh.oneplusplus.dto.notification.NotificationEvent;
+import com.hh.oneplusplus.dto.notification.NotificationEventType;
+import com.hh.oneplusplus.exception.TemplateNotFoundException;
+import com.hh.oneplusplus.repository.MessageTemplateRepository;
+import org.apache.commons.text.StringSubstitutor;
+import org.springframework.stereotype.Service;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.util.HashMap;
+import java.util.Map;
+
+@Service
+public class MessageResolverService {
+    private final MessageTemplateRepository messageTemplateRepository;
+    private final Cache<String, String> templateCache;
+    private final ObjectMapper objectMapper;
+
+    public MessageResolverService(
+            MessageTemplateRepository messageTemplateRepository,
+            Cache<String, String> templateCache,
+            ObjectMapper objectMapper) {
+        this.messageTemplateRepository = messageTemplateRepository;
+        this.templateCache = templateCache;
+        this.objectMapper = objectMapper;
+    }
+
+    public String resolveMessage(NotificationEvent event){
+        String template = templateCache.get(
+                event.getEventType().name(),
+                key -> messageTemplateRepository
+                        .findByEventType(NotificationEventType.valueOf(key))
+                        .orElseThrow(() -> new TemplateNotFoundException(key))
+                        .getTemplate()
+        );
+        Map<String, Object> fields = objectMapper.convertValue(event, Map.class);
+        Map<String, Object> flatFields = new HashMap<>();
+        flatten("", fields, flatFields);
+
+        return StringSubstitutor.replace(template, flatFields);
+    }
+    private void flatten(String prefix, Map<String, Object> source, Map<String, Object> result){
+        for(Map.Entry<String, Object> entry: source.entrySet()){
+            String key = prefix.isEmpty() ? entry.getKey() : prefix + "." + entry.getKey();
+            if(entry.getValue() instanceof  Map){
+                flatten(key, (Map<String, Object>) entry.getValue(), result);
+            }
+            else{
+                result.put(key, entry.getValue());
+            }
+        }
+    }
+}
