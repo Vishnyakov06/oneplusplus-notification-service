@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
@@ -17,5 +18,6 @@ public interface NotificationDeliveryRepository extends JpaRepository<Notificati
         ON CONFLICT (notification_id, channel) DO NOTHING
         """, nativeQuery = true)
     int tryReserve(@Param("notificationId") UUID notificationId, @Param("channel") String channel);
+    @Transactional
     void deleteByNotificationIdAndChannel(UUID notificationId, NotificationType channel);
 }
