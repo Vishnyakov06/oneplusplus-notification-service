@@ -33,7 +33,7 @@
         <dependency>
             <groupId>com.github.Vishnyakov06</groupId>
             <artifactId>oneplusplus-shared-dto</artifactId>
-            <version>3376917319</version>
+            <version>325ee5da48</version>
         </dependency>
 
         <dependency>
@@ -104,6 +104,16 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-mail</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.github.mrskeletone</groupId>
+            <artifactId>onePlusPlus-jwt-library</artifactId>
+            <version>15ba4c30ce77e607e2b652c2db33ee68eb55b2e7</version>
         </dependency>
     </dependencies>
 

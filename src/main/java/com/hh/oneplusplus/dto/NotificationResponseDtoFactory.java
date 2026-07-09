@@ -16,6 +16,6 @@ public class NotificationResponseDtoFactory {
     }
     public NotificationResponseDto create(NotificationEvent event){
         String message = resolverService.resolveMessage(event);
-        return mapper.toResponseDto(event, message);
+        return mapper.toResponseDto(event, message, false);
     }
 }

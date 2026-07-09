@@ -71,6 +71,7 @@ class NotificationServiceTest {
                 "test@gmail.com",
                 Instant.now(),
                 "Добро пожаловать!",
+                false,
                 Map.of()
         );
     }

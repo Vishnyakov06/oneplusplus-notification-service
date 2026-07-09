@@ -31,7 +31,7 @@ public class Notification {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "event_type", nullable = false)
-    private NotificationEventType eventType;
+    private NotificationEventType notificationType;
 
     @Column(name = "message", nullable = false)
     private String message;
@@ -46,7 +46,7 @@ public class Notification {
     @Column(name = "created_at", nullable = false)
     private Instant createdAt;
 
-    @Column(name = "readAt", nullable = true)
+    @Column(name = "read_at", nullable = true)
     private Instant readAt;
 
     public Instant getReadAt() {
@@ -58,6 +58,14 @@ public class Notification {
     }
 
     public Notification() {
+    }
+
+    public NotificationEventType getNotificationType() {
+        return notificationType;
+    }
+
+    public void setNotificationType(NotificationEventType notificationType) {
+        this.notificationType = notificationType;
     }
 
     public UUID getNotificationId() {
@@ -80,10 +88,6 @@ public class Notification {
         return message;
     }
 
-    public NotificationEventType getEventType() {
-        return eventType;
-    }
-
     public Long getUserId() {
         return userId;
     }
@@ -100,10 +104,6 @@ public class Notification {
         this.notificationId = notificationId;
     }
 
-    public void setEventType(NotificationEventType eventType) {
-        this.eventType = eventType;
-    }
-
     public void setMessage(String message) {
         this.message = message;
     }
@@ -112,8 +112,8 @@ public class Notification {
         this.params = params;
     }
 
-    public void setRead(boolean read) {
-        isRead = read;
+    public void setRead(boolean isRead) {
+        this.isRead = isRead;
     }
 
     public void setCreatedAt(Instant createdAt) {

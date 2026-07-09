@@ -41,6 +41,7 @@ class SseEmitterServiceTest {
                 "test@gmail.com",
                 Instant.now(),
                 "test message",
+                false,
                 Map.of()
         );
     }
