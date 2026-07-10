@@ -1,0 +1,24 @@
+services:
+  notification-postgres:
+    ports: !reset []
+    environment:
+      POSTGRES_DB: ${NOTIFICATION_DB}
+      POSTGRES_USER: ${NOTIFICATION_USER}
+      POSTGRES_PASSWORD: ${NOTIFICATION_PASSWORD}
+
+  notification-service:
+    profiles: !reset []
+    ports: !reset []
+    env_file: .env.prod
+    environment:
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      POSTGRES_HOST: notification-postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_DB: ${NOTIFICATION_DB}
+      POSTGRES_USER: ${NOTIFICATION_USER}
+      POSTGRES_PASSWORD: ${NOTIFICATION_PASSWORD}
+      MAIL_SENDER: ${MAIL_SENDER}
+      MAIL_PASSWORD: ${MAIL_PASSWORD}
+      MAIL_HOST: ${MAIL_HOST}
+      MAIL_PORT: ${MAIL_PORT}
+    restart: unless-stopped
