@@ -5,4 +5,5 @@ INSERT INTO message_templates (event_type, template) VALUES
    ('MEMBER_KICKED', 'Вы были исключены из события "${eventTitle}"'),
    ('EVENT_UPDATED', 'Событие "${eventTitle}" было обновлено'),
    ('EVENT_DELETED', 'Событие "${eventTitle}" было удалено'),
-   ('INVITE',        'Вас пригласили в событие "${eventTitle}"');
+   ('INVITE_WEB',  'Вас пригласили в событие "${eventTitle}"'),
+   ('INVITE_MAIL', 'Вас пригласили в событие "${eventTitle}": ${inviteTarget}');

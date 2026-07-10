@@ -28,8 +28,14 @@ public class MessageResolverService {
     }
 
     public String resolveMessage(NotificationEvent event){
+        //сейчас пока такой костыль, если в будущем будет проблема с двойными каналами, добавим отдельный
+        // столбец с типом канала
+        String templateKey = event.getEventType() == NotificationEventType.INVITE
+                ? "INVITE_" + event.getType()
+                : event.getEventType().name();
+
         String template = templateCache.get(
-                event.getEventType().name(),
+                templateKey,
                 key -> messageTemplateRepository
                         .findByEventType(NotificationEventType.valueOf(key))
                         .orElseThrow(() -> new TemplateNotFoundException(key))
