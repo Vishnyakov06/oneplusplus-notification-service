@@ -2,7 +2,6 @@ package com.hh.oneplusplus.service;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.hh.oneplusplus.dto.notification.NotificationEvent;
-import com.hh.oneplusplus.dto.notification.NotificationEventType;
 import com.hh.oneplusplus.exception.TemplateNotFoundException;
 import com.hh.oneplusplus.repository.MessageTemplateRepository;
 import org.apache.commons.text.StringSubstitutor;
@@ -28,19 +27,16 @@ public class MessageResolverService {
     }
 
     public String resolveMessage(NotificationEvent event){
-        //сейчас пока такой костыль, если в будущем будет проблема с двойными каналами, добавим отдельный
-        // столбец с типом канала
-        String templateKey = event.getEventType() == NotificationEventType.INVITE
-                ? "INVITE_" + event.getType()
-                : event.getEventType().name();
+        String templateKey = event.getEventType().name() + "_" + event.getType().name();
 
         String template = templateCache.get(
                 templateKey,
                 key -> messageTemplateRepository
-                        .findByEventType(NotificationEventType.valueOf(key))
+                        .findByEventTypeAndChannel(event.getEventType(), event.getType())
                         .orElseThrow(() -> new TemplateNotFoundException(key))
                         .getTemplate()
         );
+
         Map<String, Object> fields = objectMapper.convertValue(event, Map.class);
         Map<String, Object> flatFields = new HashMap<>();
         flatten("", fields, flatFields);
