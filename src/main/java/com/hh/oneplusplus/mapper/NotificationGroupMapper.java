@@ -5,11 +5,11 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hh.oneplusplus.dto.NotificationResponseDto;
 import com.hh.oneplusplus.dto.notification.NotificationEventType;
+import com.hh.oneplusplus.repository.projection.NotificationGroupDetailProjection;
+import com.hh.oneplusplus.repository.projection.NotificationGroupSummaryProjection;
 import com.hh.oneplusplus.service.MessageResolverService;
-import jakarta.persistence.Tuple;
 import org.springframework.stereotype.Component;
 
-import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -27,33 +27,35 @@ public class NotificationGroupMapper {
         this.messageResolverService = messageResolverService;
     }
 
-    public NotificationResponseDto map(Tuple tuple) {
-        Integer groupCount = tuple.get("group_count", Long.class).intValue();
+    public NotificationResponseDto map(NotificationGroupSummaryProjection summary,
+                                       NotificationGroupDetailProjection head) {
+        Integer groupCount = summary.getGroupCount().intValue();
         boolean isGroup = groupCount > 1;
 
-        String groupedIdsRaw = tuple.get("grouped_ids", String.class);
         List<UUID> groupIds = isGroup
-                ? Arrays.stream(groupedIdsRaw.split(",")).map(UUID::fromString).toList()
+                ? Arrays.stream(head.getGroupedIds().split(",")).map(UUID::fromString).toList()
                 : null;
 
-        NotificationEventType eventType = NotificationEventType.valueOf(tuple.get("event_type", String.class));
-        Map<String, Object> params = parseParams(tuple.get("params", String.class));
+        NotificationEventType eventType = NotificationEventType.valueOf(head.getEventType());
+        Map<String, Object> params = parseParams(head.getParams());
 
         String message = isGroup
                 ? messageResolverService.resolveGroupMessage(eventType, groupCount, params)
-                : tuple.get("message", String.class);
+                : head.getMessage();
+
         return new NotificationResponseDto(
-                tuple.get("notification_id", UUID.class),
+                head.getNotificationId(),
                 eventType,
                 null,
-                tuple.get("created_at", Instant.class),
+                head.getCreatedAt(),
                 message,
-                tuple.get("is_read", Boolean.class),
+                Boolean.TRUE.equals(summary.getGroupIsRead()),
                 params,
                 isGroup ? groupCount : null,
                 isGroup ? groupIds : null
         );
     }
+
     private Map<String, Object> parseParams(String json) {
         if (json == null) {
             return Map.of();

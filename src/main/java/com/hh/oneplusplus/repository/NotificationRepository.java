@@ -1,6 +1,7 @@
 package com.hh.oneplusplus.repository;
 import com.hh.oneplusplus.model.Notification;
-import jakarta.persistence.Tuple;
+import com.hh.oneplusplus.repository.projection.NotificationGroupDetailProjection;
+import com.hh.oneplusplus.repository.projection.NotificationGroupSummaryProjection;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -47,39 +48,60 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
         with notification_and_group_key as (
             select n.*,
                 case
-                    when n.event_type in :eventTypes
+                    when n.event_type in (:eventTypes)
                     then n.event_type || ':' || (n.params->>'eventId') || ':' || n.is_read::text
                     else 'single:' || n.notification_id::text
                 end as group_key
             from notifications as n
             where n.user_id = :userId
-        ),
-        grouped as (
-                select ng.*,
-                    COUNT(*) over (partition by group_key) as group_count,
-                    ng.is_read as group_is_read,
-                    STRING_AGG(notification_id::text, ',') over (partition by group_key) as grouped_ids,
-                    ROW_NUMBER() over (partition by group_key order by created_at desc) as rn
-                from notification_and_group_key as ng
         )
-        select * from grouped
-        where rn = 1
-        order by created_at desc
+        select group_key,
+               max(created_at) as sort_ts,
+               count(*) as group_count,
+               bool_and(is_read) as group_is_read
+        from notification_and_group_key
+        group by group_key
+        order by sort_ts desc
         """,
             countQuery = """
-                select count(distinct
+            with notification_and_group_key as (
+                select n.*,
                     case
-                        when n.event_type in :eventTypes
+                        when n.event_type in (:eventTypes)
                         then n.event_type || ':' || (n.params->>'eventId') || ':' || n.is_read::text
                         else 'single:' || n.notification_id::text
-                    end
-                )
+                    end as group_key
                 from notifications as n
                 where n.user_id = :userId
+            )
+            select count(distinct group_key) from notification_and_group_key
         """, nativeQuery = true)
-    Page<Tuple> findGroupedPage(
+    Page<NotificationGroupSummaryProjection> findGroupSummaries(
             @Param("userId") Long userId,
             @Param("eventTypes") Set<String> eventTypes,
             Pageable pageable
+    );
+
+    @Query(value = """
+        with notification_and_group_key as (
+            select n.*,
+                case
+                    when n.event_type in (:eventTypes)
+                    then n.event_type || ':' || (n.params->>'eventId') || ':' || n.is_read::text
+                    else 'single:' || n.notification_id::text
+                end as group_key
+            from notifications as n
+            where n.user_id = :userId
+        )
+        select ng.*,
+               string_agg(notification_id::text, ',') over (partition by group_key) as grouped_ids,
+               row_number() over (partition by group_key order by created_at desc) as rn
+        from notification_and_group_key as ng
+        where group_key in (:groupKeys)
+        """, nativeQuery = true)
+    List<NotificationGroupDetailProjection> findGroupDetails(
+            @Param("userId") Long userId,
+            @Param("eventTypes") Set<String> eventTypes,
+            @Param("groupKeys") Set<String> groupKeys
     );
 }

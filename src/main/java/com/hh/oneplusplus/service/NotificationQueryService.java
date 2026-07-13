@@ -8,13 +8,20 @@ import com.hh.oneplusplus.dto.notification.NotificationEventType;
 import com.hh.oneplusplus.exception.NotificationNotFoundException;
 import com.hh.oneplusplus.mapper.NotificationGroupMapper;
 import com.hh.oneplusplus.repository.NotificationRepository;
+import com.hh.oneplusplus.repository.projection.NotificationGroupDetailProjection;
+import com.hh.oneplusplus.repository.projection.NotificationGroupSummaryProjection;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 public class NotificationQueryService {
@@ -34,11 +41,29 @@ public class NotificationQueryService {
     @Transactional(readOnly = true)
     public NotificationPageResponse getNotifications(Pageable pageable) {
         Long userId = securityContextService.getUserId();
-        Set<String> groupableTypes = NotificationEventType.GROUPABLE_TYPES;
-        Page<NotificationResponseDto> responseDto = notificationRepository.findGroupedPage(userId, groupableTypes, pageable)
-                .map(notificationGroupMapper::map);
+        Set<String> eventTypes = NotificationEventType.GROUPABLE_TYPES;
+        Page<NotificationGroupSummaryProjection> summaries =
+                notificationRepository.findGroupSummaries(userId, eventTypes, pageable);
+
+        Set<String> groupKeys = summaries.getContent().stream()
+                .map(NotificationGroupSummaryProjection::getGroupKey)
+                .collect(Collectors.toSet());
+
         long totalUnread = notificationRepository.countByUserIdAndIsReadFalse(userId);
-        return new NotificationPageResponse(responseDto, totalUnread);
+        List<NotificationGroupDetailProjection> details =
+                notificationRepository.findGroupDetails(userId, eventTypes, groupKeys);
+
+        Map<String, NotificationGroupDetailProjection> headByGroupKey = details.stream()
+                .filter(d -> d.getRn() == 1)
+                .collect(Collectors.toMap(NotificationGroupDetailProjection::getGroupKey, Function.identity()));
+
+        List<NotificationResponseDto> result = summaries.getContent().stream()
+                .map(s -> notificationGroupMapper.map(s, headByGroupKey.get(s.getGroupKey())))
+                .toList();
+
+        Page<NotificationResponseDto> page = new PageImpl<>(result, pageable, summaries.getTotalElements());
+
+        return new NotificationPageResponse(page, totalUnread);
     }
 
     @Transactional(readOnly = true)
