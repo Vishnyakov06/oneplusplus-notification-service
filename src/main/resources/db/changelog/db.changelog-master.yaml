@@ -23,3 +23,9 @@ databaseChangeLog:
       changes:
         - sqlFile:
             path: db/changelog/changes/004-create-notification-deliveries-table.sql
+  - changeSet:
+      id: 005-insert-join-request-templates
+      author: Daniil Vishnyakov
+      changes:
+        - sqlFile:
+            path: db/changelog/changes/005-insert-join-request-templates.sql
