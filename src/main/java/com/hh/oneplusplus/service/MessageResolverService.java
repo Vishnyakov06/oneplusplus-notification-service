@@ -2,6 +2,7 @@ package com.hh.oneplusplus.service;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.hh.oneplusplus.dto.notification.NotificationEvent;
+import com.hh.oneplusplus.dto.notification.NotificationEventType;
 import com.hh.oneplusplus.exception.TemplateNotFoundException;
 import com.hh.oneplusplus.repository.MessageTemplateRepository;
 import org.apache.commons.text.StringSubstitutor;
