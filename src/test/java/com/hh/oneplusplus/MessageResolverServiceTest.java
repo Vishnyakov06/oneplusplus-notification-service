@@ -39,7 +39,7 @@ class MessageResolverServiceTest {
     void setUp() {
         Cache<String, String> cache = Caffeine.newBuilder().build();
         ObjectMapper objectMapper = new ObjectMapper()
-                .registerModule(new JavaTimeModule()); // добавить
+                .registerModule(new JavaTimeModule());
         resolverService = new MessageResolverService(templateRepository, cache, objectMapper);
     }
 
@@ -57,9 +57,10 @@ class MessageResolverServiceTest {
 
         MessageTemplate template = new MessageTemplate();
         template.setEventType(NotificationEventType.WELCOME);
+        template.setChannel(NotificationType.WEB);
         template.setTemplate("Добро пожаловать, ${userName} ${userSurname}!");
 
-        when(templateRepository.findByEventType(NotificationEventType.WELCOME))
+        when(templateRepository.findByEventTypeAndChannel(NotificationEventType.WELCOME, NotificationType.WEB))
                 .thenReturn(Optional.of(template));
 
         String result = resolverService.resolveMessage(event);
@@ -79,7 +80,7 @@ class MessageResolverServiceTest {
                 "Петров"
         );
 
-        when(templateRepository.findByEventType(NotificationEventType.WELCOME))
+        when(templateRepository.findByEventTypeAndChannel(NotificationEventType.WELCOME, NotificationType.WEB))
                 .thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> resolverService.resolveMessage(event))
@@ -101,15 +102,17 @@ class MessageResolverServiceTest {
 
         MessageTemplate template = new MessageTemplate();
         template.setEventType(NotificationEventType.WELCOME);
+        template.setChannel(NotificationType.WEB);
         template.setTemplate("Привет, ${userName}");
 
-        when(templateRepository.findByEventType(NotificationEventType.WELCOME))
+        when(templateRepository.findByEventTypeAndChannel(NotificationEventType.WELCOME, NotificationType.WEB))
                 .thenReturn(Optional.of(template));
 
         resolverService.resolveMessage(event);
         resolverService.resolveMessage(event);
 
-        verify(templateRepository, times(1)).findByEventType(NotificationEventType.WELCOME);
+        verify(templateRepository, times(1))
+                .findByEventTypeAndChannel(NotificationEventType.WELCOME, NotificationType.WEB);
     }
 
     @Test
@@ -126,9 +129,10 @@ class MessageResolverServiceTest {
 
         MessageTemplate template = new MessageTemplate();
         template.setEventType(NotificationEventType.WELCOME);
+        template.setChannel(NotificationType.WEB);
         template.setTemplate("Текст без плейсхолдеров");
 
-        when(templateRepository.findByEventType(NotificationEventType.WELCOME))
+        when(templateRepository.findByEventTypeAndChannel(NotificationEventType.WELCOME, NotificationType.WEB))
                 .thenReturn(Optional.of(template));
 
         String result = resolverService.resolveMessage(event);

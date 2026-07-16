@@ -1,6 +1,7 @@
 package com.hh.oneplusplus.config;
 
 import com.hh.oneplusplus.jwt.JwtFilter;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,6 +26,10 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity, JwtFilter jwtFilter) throws Exception {
         httpSecurity
+                .exceptionHandling(ex -> ex
+                        .authenticationEntryPoint((req, resp, e) -> {
+                            resp.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Authentication required");
+                        }))
                 .cors(cors -> cors.configurationSource(configuration()))
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
