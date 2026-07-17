@@ -43,6 +43,9 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
             " where n.notificationId in :ids and n.userId = :userId and n.isRead = false")
     void markSelectedAsRead(@Param("ids") List<UUID> ids, @Param("userId") Long userId);
 
+    @Modifying
+    @Query("DELETE FROM Notification n WHERE n.notificationId IN :ids AND n.userId = :userId")
+    void deleteSelected(@Param("ids") List<UUID> ids, @Param("userId") Long userId);
 
     @Query(value = """
         with notification_and_group_key as (

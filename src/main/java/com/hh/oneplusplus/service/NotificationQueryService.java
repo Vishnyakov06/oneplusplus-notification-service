@@ -4,6 +4,7 @@ import com.hh.oneplusplus.dto.MarkReadRequestDto;
 import com.hh.oneplusplus.dto.NotificationPageResponse;
 import com.hh.oneplusplus.dto.NotificationResponseDto;
 import com.hh.oneplusplus.dto.UnreadCountResponse;
+import com.hh.oneplusplus.dto.DeleteGroupRequestDto;
 import com.hh.oneplusplus.dto.notification.NotificationEventType;
 import com.hh.oneplusplus.exception.NotificationNotFoundException;
 import com.hh.oneplusplus.mapper.NotificationGroupMapper;
@@ -97,6 +98,12 @@ public class NotificationQueryService {
     public void deleteAllNotifications(){
         Long userId = securityContextService.getUserId();
         notificationRepository.deleteByUserId(userId);
+    }
+
+    @Transactional
+    public void deleteGroup(DeleteGroupRequestDto request){
+        Long userId = securityContextService.getUserId();
+        notificationRepository.deleteSelected(request.ids(), userId);
     }
 
 }
