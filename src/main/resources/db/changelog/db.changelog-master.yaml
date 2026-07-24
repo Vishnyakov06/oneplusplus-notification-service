@@ -41,3 +41,10 @@ databaseChangeLog:
       changes:
         - sqlFile:
             path: db/changelog/changes/007-fix-created-at-timezone.sql
+  - changeSet:
+      id: 008-insert-join-request-templates
+      author: Daniil Vishnyakov
+      changes:
+        - sqlFile:
+            path: db/changelog/changes/008-insert-join-request-templates.sql
+        
