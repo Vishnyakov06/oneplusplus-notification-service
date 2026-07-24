@@ -4,38 +4,67 @@ import com.hh.oneplusplus.dto.MarkReadRequestDto;
 import com.hh.oneplusplus.dto.NotificationPageResponse;
 import com.hh.oneplusplus.dto.NotificationResponseDto;
 import com.hh.oneplusplus.dto.UnreadCountResponse;
+import com.hh.oneplusplus.dto.DeleteGroupRequestDto;
+import com.hh.oneplusplus.dto.notification.NotificationEventType;
 import com.hh.oneplusplus.exception.NotificationNotFoundException;
-import com.hh.oneplusplus.mapper.NotificationMapper;
+import com.hh.oneplusplus.mapper.NotificationGroupMapper;
 import com.hh.oneplusplus.repository.NotificationRepository;
+import com.hh.oneplusplus.repository.projection.NotificationGroupDetailProjection;
+import com.hh.oneplusplus.repository.projection.NotificationGroupSummaryProjection;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 public class NotificationQueryService {
     private final NotificationRepository notificationRepository;
-    private final NotificationMapper mapper;
     private final SecurityContextService securityContextService;
+    private final NotificationGroupMapper notificationGroupMapper;
 
     public NotificationQueryService(
             NotificationRepository notificationRepository,
-            NotificationMapper mapper,
-            SecurityContextService securityContextService) {
+            SecurityContextService securityContextService,
+            NotificationGroupMapper notificationGroupMapper) {
         this.notificationRepository = notificationRepository;
-        this.mapper = mapper;
         this.securityContextService = securityContextService;
+        this.notificationGroupMapper = notificationGroupMapper;
     }
 
     @Transactional(readOnly = true)
     public NotificationPageResponse getNotifications(Pageable pageable) {
         Long userId = securityContextService.getUserId();
-        Page<NotificationResponseDto> responseDto = notificationRepository.findByUserId(userId, pageable)
-                .map(mapper::toResponseDto);
+        Set<String> eventTypes = NotificationEventType.GROUPABLE_TYPES;
+        Page<NotificationGroupSummaryProjection> summaries =
+                notificationRepository.findGroupSummaries(userId, eventTypes, pageable);
+
+        Set<String> groupKeys = summaries.getContent().stream()
+                .map(NotificationGroupSummaryProjection::getGroupKey)
+                .collect(Collectors.toSet());
+
         long totalUnread = notificationRepository.countByUserIdAndIsReadFalse(userId);
-        return new NotificationPageResponse(responseDto, totalUnread);
+        List<NotificationGroupDetailProjection> details =
+                notificationRepository.findGroupDetails(userId, eventTypes, groupKeys);
+
+        Map<String, NotificationGroupDetailProjection> headByGroupKey = details.stream()
+                .filter(d -> d.getRn() == 1)
+                .collect(Collectors.toMap(NotificationGroupDetailProjection::getGroupKey, Function.identity()));
+
+        List<NotificationResponseDto> result = summaries.getContent().stream()
+                .map(s -> notificationGroupMapper.map(s, headByGroupKey.get(s.getGroupKey())))
+                .toList();
+
+        Page<NotificationResponseDto> page = new PageImpl<>(result, pageable, summaries.getTotalElements());
+
+        return new NotificationPageResponse(page, totalUnread);
     }
 
     @Transactional(readOnly = true)
@@ -69,6 +98,12 @@ public class NotificationQueryService {
     public void deleteAllNotifications(){
         Long userId = securityContextService.getUserId();
         notificationRepository.deleteByUserId(userId);
+    }
+
+    @Transactional
+    public void deleteGroup(DeleteGroupRequestDto request){
+        Long userId = securityContextService.getUserId();
+        notificationRepository.deleteSelected(request.ids(), userId);
     }
 
 }

@@ -42,7 +42,9 @@ class SseEmitterServiceTest {
                 Instant.now(),
                 "test message",
                 false,
-                Map.of()
+                Map.of(),
+                null,
+                null
         );
     }
 

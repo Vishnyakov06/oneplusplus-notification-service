@@ -24,8 +24,27 @@ databaseChangeLog:
         - sqlFile:
             path: db/changelog/changes/004-create-notification-deliveries-table.sql
   - changeSet:
+      id: 005-add-group-template-column
+      author: Daniil Vishnyakov
+      changes:
+        - sqlFile:
+            path: db/changelog/changes/005-add-group-template-column.sql
+  - changeSet:
+      id: 006-insert-group-templates
+      author: Daniil Vishnyakov
+      changes:
+        - sqlFile:
+            path: db/changelog/changes/006-insert-group-templates.sql
+  - changeSet:
+      id: 007-fix-created-at-timezone
+      author: Daniil Vishnyakov
+      changes:
+        - sqlFile:
+            path: db/changelog/changes/007-fix-created-at-timezone.sql
+  - changeSet:
       id: 008-insert-join-request-templates
       author: Daniil Vishnyakov
       changes:
         - sqlFile:
             path: db/changelog/changes/008-insert-join-request-templates.sql
+        

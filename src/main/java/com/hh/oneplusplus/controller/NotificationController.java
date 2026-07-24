@@ -1,5 +1,6 @@
 package com.hh.oneplusplus.controller;
 
+import com.hh.oneplusplus.dto.DeleteGroupRequestDto;
 import com.hh.oneplusplus.dto.MarkReadRequestDto;
 import com.hh.oneplusplus.dto.NotificationPageResponse;
 import com.hh.oneplusplus.dto.UnreadCountResponse;
@@ -72,6 +73,13 @@ public class NotificationController {
     @DeleteMapping
     public ResponseEntity<Void> deleteAllNotifications() {
         notificationQueryService.deleteAllNotifications();
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/group")
+    public ResponseEntity<Void> deleteGroup(@RequestBody DeleteGroupRequestDto group) {
+
+        notificationQueryService.deleteGroup(group);
         return ResponseEntity.noContent().build();
     }
 

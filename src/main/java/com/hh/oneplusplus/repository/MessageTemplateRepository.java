@@ -11,4 +11,6 @@ import java.util.Optional;
 @Repository
 public interface MessageTemplateRepository extends JpaRepository<MessageTemplate, Long> {
     Optional<MessageTemplate> findByEventTypeAndChannel(NotificationEventType eventType, NotificationType channel);
+
+    Optional<MessageTemplate>  findByEventType(NotificationEventType eventType);
 }
