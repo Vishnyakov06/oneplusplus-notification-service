@@ -47,4 +47,10 @@ databaseChangeLog:
       changes:
         - sqlFile:
             path: db/changelog/changes/008-insert-join-request-templates.sql
+  - changeSet:
+      id: 009-add-join-request-submitted-group-template.sql
+      author: Daniil Vishnyakov
+      changes:
+        - sqlFile:
+            path: db/changelog/changes/009-add-join-request-submitted-group-template.sql
         
