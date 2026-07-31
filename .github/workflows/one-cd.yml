@@ -1,7 +1,7 @@
 name: CD
 on:
   push:
-    branches: [main, one-143]
+    branches: [main]
 jobs:
   deploy:
     runs-on: ubuntu-latest
