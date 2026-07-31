@@ -19,6 +19,6 @@ jobs:
           proxy_key: ${{ secrets.SSH_KEY }}
           script: |
             cd /opt/one_plus_plus/oneplusplus-notification-service
-            sudo -u one_plus_plus docker compose -f docker-compose.yml --env-file .env.prod down
+            sudo -u one_plus_plus docker compose -f docker-compose.yml --env-file .env.prod --profile backend down
             sudo -u one_plus_plus git pull origin main
-            sudo -u one_plus_plus docker compose -f docker-compose.yml --env-file .env.prod up -d --build
+            sudo -u one_plus_plus docker compose -f docker-compose.yml --env-file .env.prod --profile backend up -d --build
