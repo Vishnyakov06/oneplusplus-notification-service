@@ -53,4 +53,9 @@ databaseChangeLog:
       changes:
         - sqlFile:
             path: db/changelog/changes/009-add-join-request-submitted-group-template.sql
-        
+  - changeSet:
+      id: 012-insert-stage-message-templates
+      author: Chernenko Valeri
+      changes:
+        - sqlFile:
+            path: db/changelog/changes/012-insert-stage-message-templates.sql
