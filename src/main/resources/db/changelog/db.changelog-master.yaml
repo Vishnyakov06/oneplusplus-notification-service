@@ -53,4 +53,15 @@ databaseChangeLog:
       changes:
         - sqlFile:
             path: db/changelog/changes/009-add-join-request-submitted-group-template.sql
-        
+  - changeSet:
+      id: 013-insert-new-chat-message-templates
+      author: Daniil Vishnyakov
+      changes:
+        - sqlFile:
+            path: db/changelog/changes/013-insert-new-chat-message-templates.sql
+  - changeSet:
+      id: 014-add-new-chat-message-group-templates
+      author: Daniil Vishnyakov
+      changes:
+        - sqlFile:
+            path: db/changelog/changes/014-add-new-chat-message-group-templates.sql
