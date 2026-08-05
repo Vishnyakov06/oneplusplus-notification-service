@@ -33,7 +33,7 @@
         <dependency>
             <groupId>com.github.Vishnyakov06</groupId>
             <artifactId>oneplusplus-shared-dto</artifactId>
-            <version>aa86407616</version>
+            <version>49a580fd4f</version>
         </dependency>
 
         <dependency>
@@ -113,7 +113,7 @@
         <dependency>
             <groupId>com.github.mrskeletone</groupId>
             <artifactId>onePlusPlus-jwt-library</artifactId>
-            <version>15ba4c30ce77e607e2b652c2db33ee68eb55b2e7</version>
+            <version>1.0.3betaV1</version>
         </dependency>
     </dependencies>
 
