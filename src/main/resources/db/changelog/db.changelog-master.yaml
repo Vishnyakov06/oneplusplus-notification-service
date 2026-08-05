@@ -65,4 +65,10 @@ databaseChangeLog:
       changes:
         - sqlFile:
             path: db/changelog/changes/011-insert-friend-message-templates.sql
+  - changeSet:
+      id: 012-insert-stage-message-templates
+      author: Chernenko Valeri
+      changes:
+        - sqlFile:
+            path: db/changelog/changes/012-insert-stage-message-templates.sql
         
