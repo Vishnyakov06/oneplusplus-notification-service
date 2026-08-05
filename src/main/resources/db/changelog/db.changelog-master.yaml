@@ -59,4 +59,10 @@ databaseChangeLog:
       changes:
         - sqlFile:
             path: db/changelog/changes/010-add-activate-notfication.sql
+  - changeSet:
+      id: 011-insert-friend-message-templates
+      author: Chernenko Valeri
+      changes:
+        - sqlFile:
+            path: db/changelog/changes/011-insert-friend-message-templates.sql
         

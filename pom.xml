@@ -33,7 +33,7 @@
         <dependency>
             <groupId>com.github.Vishnyakov06</groupId>
             <artifactId>oneplusplus-shared-dto</artifactId>
-            <version>49a580fd4f</version>
+            <version>aafffebdea</version>
         </dependency>
 
         <dependency>
