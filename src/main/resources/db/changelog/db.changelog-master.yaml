@@ -71,4 +71,10 @@ databaseChangeLog:
       changes:
         - sqlFile:
             path: db/changelog/changes/012-insert-stage-message-templates.sql
+  - changeSet:
+      id: 014-insert-admin-action-message-templates
+      author: Chernenko Valeri
+      changes:
+        - sqlFile:
+            path: db/changelog/changes/014-insert-admin-action-message-templates.sql
         
