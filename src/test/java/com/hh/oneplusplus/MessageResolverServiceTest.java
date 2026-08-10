@@ -53,7 +53,7 @@ class MessageResolverServiceTest {
                 Instant.now(),
                 "Иван",
                 "Петров",
-                "url"
+                "https://example.com"
         );
 
         MessageTemplate template = new MessageTemplate();
@@ -79,7 +79,7 @@ class MessageResolverServiceTest {
                 Instant.now(),
                 "Иван",
                 "Петров",
-                "url"
+                "https://example.com"
         );
 
         when(templateRepository.findByEventTypeAndChannel(NotificationEventType.WELCOME, NotificationType.WEB))
@@ -100,7 +100,7 @@ class MessageResolverServiceTest {
                 Instant.now(),
                 "Иван",
                 "Петров",
-                "url"
+                "https://example.com"
         );
 
         MessageTemplate template = new MessageTemplate();
@@ -128,7 +128,7 @@ class MessageResolverServiceTest {
                 Instant.now(),
                 "Иван",
                 "Петров",
-                "url"
+                "https://example.com"
         );
 
         MessageTemplate template = new MessageTemplate();

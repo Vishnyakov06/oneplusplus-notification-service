@@ -52,7 +52,7 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
             select n.*,
                 case
                     when n.event_type in (:eventTypes)
-                    then n.event_type || ':' || (n.params->>'eventId') || ':' || n.is_read::text
+                    then n.event_type || ':' || coalesce(n.params->>'eventId', n.params->>'chatId') || ':' || n.is_read::text
                     else 'single:' || n.notification_id::text
                 end as group_key
             from notifications as n
@@ -71,7 +71,7 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
                 select n.*,
                     case
                         when n.event_type in (:eventTypes)
-                        then n.event_type || ':' || (n.params->>'eventId') || ':' || n.is_read::text
+                        then n.event_type || ':' || coalesce(n.params->>'eventId', n.params->>'chatId') || ':' || n.is_read::text
                         else 'single:' || n.notification_id::text
                     end as group_key
                 from notifications as n
@@ -90,7 +90,7 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
             select n.*,
                 case
                     when n.event_type in (:eventTypes)
-                    then n.event_type || ':' || (n.params->>'eventId') || ':' || n.is_read::text
+                    then n.event_type || ':' || coalesce(n.params->>'eventId', n.params->>'chatId') || ':' || n.is_read::text
                     else 'single:' || n.notification_id::text
                 end as group_key
             from notifications as n

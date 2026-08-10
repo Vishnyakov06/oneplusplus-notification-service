@@ -59,7 +59,9 @@ public class MessageResolverService {
         Map<String, Object> fields = Map.of(
                 "params", params,
                 "othersCount", others,
-                "othersWord", pluralForm(others)
+                "othersWord", pluralForm(others),
+                "messageCount", groupCount,
+                "messageWord", pluralMessageForm(groupCount)
         );
         Map<String, Object> flatFields = new HashMap<>();
         flatten("", fields, flatFields);
@@ -89,5 +91,20 @@ public class MessageResolverService {
             return "человек";
         }
         return "человек";
+    }
+
+    private String pluralMessageForm(int n) {
+        int mod100 = n % 100;
+        int mod10 = mod100 % 10;
+        if (mod100 > 10 && mod100 < 20){
+            return "сообщений";
+        }
+        if (mod10 == 1){
+            return "сообщение";
+        }
+        if (mod10 > 1 && mod10 < 5){
+            return "сообщения";
+        }
+        return "сообщений";
     }
 }
