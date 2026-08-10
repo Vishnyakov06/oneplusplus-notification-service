@@ -51,6 +51,8 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
         with notification_and_group_key as (
             select n.*,
                 case
+                    when n.event_type = 'JOIN_REQUEST_SUBMITTED'
+                    then n.event_type || ':' || coalesce(n.params->>'chatId', n.params->>'eventId') || ':' || n.is_read::text
                     when n.event_type in (:eventTypes)
                     then n.event_type || ':' || coalesce(n.params->>'eventId', n.params->>'chatId') || ':' || n.is_read::text
                     else 'single:' || n.notification_id::text
@@ -70,6 +72,8 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
             with notification_and_group_key as (
                 select n.*,
                     case
+                        when n.event_type = 'JOIN_REQUEST_SUBMITTED'
+                        then n.event_type || ':' || coalesce(n.params->>'chatId', n.params->>'eventId') || ':' || n.is_read::text
                         when n.event_type in (:eventTypes)
                         then n.event_type || ':' || coalesce(n.params->>'eventId', n.params->>'chatId') || ':' || n.is_read::text
                         else 'single:' || n.notification_id::text
@@ -89,6 +93,8 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
         with notification_and_group_key as (
             select n.*,
                 case
+                    when n.event_type = 'JOIN_REQUEST_SUBMITTED'
+                    then n.event_type || ':' || coalesce(n.params->>'chatId', n.params->>'eventId') || ':' || n.is_read::text
                     when n.event_type in (:eventTypes)
                     then n.event_type || ':' || coalesce(n.params->>'eventId', n.params->>'chatId') || ':' || n.is_read::text
                     else 'single:' || n.notification_id::text
