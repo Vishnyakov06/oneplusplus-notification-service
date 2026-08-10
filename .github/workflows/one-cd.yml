@@ -17,6 +17,7 @@ jobs:
           proxy_port: ${{ secrets.PROXY_PORT }}
           proxy_username: ${{ secrets.SSH_USER }}
           proxy_key: ${{ secrets.SSH_KEY }}
+          command_timeout: 60m
           script: |
             cd /opt/one_plus_plus/oneplusplus-notification-service
             sudo -u one_plus_plus docker compose -f docker-compose.yml --env-file .env.prod --profile backend down

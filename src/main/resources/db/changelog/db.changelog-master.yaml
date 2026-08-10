@@ -54,6 +54,32 @@ databaseChangeLog:
         - sqlFile:
             path: db/changelog/changes/009-add-join-request-submitted-group-template.sql
   - changeSet:
+      id: 010-add-activate-notification
+      author: Chernenko Valeri
+      changes:
+        - sqlFile:
+            path: db/changelog/changes/010-add-activate-notfication.sql
+  - changeSet:
+      id: 011-insert-friend-message-templates
+      author: Chernenko Valeri
+      changes:
+        - sqlFile:
+            path: db/changelog/changes/011-insert-friend-message-templates.sql
+  - changeSet:
+      id: 012-insert-stage-message-templates
+      author: Chernenko Valeri
+      changes:
+        - sqlFile:
+            path: db/changelog/changes/012-insert-stage-message-templates.sql
+  - changeSet:
+      id: 014-insert-admin-action-message-templates
+      author: Chernenko Valeri
+      changes:
+        - sqlFile:
+            path: db/changelog/changes/014-insert-admin-action-message-templates.sql
+
+
+  - changeSet:
       id: 013-insert-new-chat-message-templates
       author: Daniil Vishnyakov
       changes:
