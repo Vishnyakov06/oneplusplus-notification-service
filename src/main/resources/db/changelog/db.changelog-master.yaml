@@ -91,3 +91,9 @@ databaseChangeLog:
       changes:
         - sqlFile:
             path: db/changelog/changes/014-add-new-chat-message-group-templates.sql
+  - changeSet:
+      id: 015-insert-new-event-action-templetes
+      author: Chernenko Valeri
+      changes:
+        - sqlFile:
+            path: db/changelog/changes/015-insert-new-event-action-templates.sql
