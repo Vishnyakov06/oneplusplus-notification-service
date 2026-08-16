@@ -103,3 +103,9 @@ databaseChangeLog:
       changes:
         - sqlFile:
             path: db/changelog/changes/016-fix-friend-notfication.sql
+  - changeSet:
+      id: 017-fix-friend-notfication
+      author: Chernenko Valeri
+      changes:
+        - sqlFile:
+            path: db/changelog/changes/017-fix2-friend-notfication.sql
